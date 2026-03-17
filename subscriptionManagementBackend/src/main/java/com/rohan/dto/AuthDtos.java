@@ -1,5 +1,7 @@
 package com.rohan.dto;
 
+import com.rohan.entity.UserEntity.Role;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -13,12 +15,21 @@ public class AuthDtos {
 			@NotBlank String fullname
 			) {}
 	
+	public record LoginRequest(
+			String email,
+			String password
+			) {}
+	
 	public record AuthResponse(
 //			String accessToken,
 //			String refreshToken,
 			String role,
-			String fullName
+			String fullName,
+			Integer loginAttempts,
+			String message,
+			boolean success
 			) {}
+
 	
 	public record EmailRequest(String email) {}
 	

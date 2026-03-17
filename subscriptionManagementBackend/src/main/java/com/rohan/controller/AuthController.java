@@ -1,3 +1,4 @@
+
 package com.rohan.controller;
 
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rohan.dto.AuthDtos.AuthResponse;
 import com.rohan.dto.AuthDtos.EmailRequest;
 import com.rohan.dto.AuthDtos.EmailRequestVal;
+import com.rohan.dto.AuthDtos.LoginRequest;
 import com.rohan.dto.AuthDtos.RegisterRequest;
 import com.rohan.service.AuthService;
 import com.rohan.service.OtpService;
@@ -37,6 +39,13 @@ public class AuthController {
 	ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody RegisterRequest userDetails){
 		log.info("AuthController: Inside registerUser Method");
 		return ResponseEntity.ok().body(authService.registerUser(userDetails));
+	}
+	
+	@PostMapping("/login")
+	@Operation(summary = "Login into System (FR-02)")
+	ResponseEntity<AuthResponse> loginUser(@RequestBody LoginRequest userDetails){
+		log.info("AuthController: Inside loginUser Method");
+		return ResponseEntity.ok().body(authService.loginUser(userDetails));
 	}
 	
 	@PostMapping("/sendotp")

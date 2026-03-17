@@ -48,6 +48,12 @@ public class UserEntity {
 	@Column
 	private String verificationToken;
 	
+	@Column
+	private Integer loginAttempts;
+	
+	@Column
+	private boolean accountLocked;
+	
 	@CreationTimestamp
     private LocalDateTime createdAt;
 	
