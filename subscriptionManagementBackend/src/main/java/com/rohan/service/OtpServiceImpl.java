@@ -36,11 +36,11 @@ public class OtpServiceImpl implements OtpService {
 	
 	@Override
 	public boolean verifyOtp(EmailRequestVal emailRequest) {
-		String key="OTP"+emailRequest.email();
+		String key="OTP:"+emailRequest.email();
 		Object storedOtp = redisTemplate.opsForValue().get(key);
 
         if (storedOtp == null) {
-            throw new RuntimeException("OTP expired or not found");
+            return false;
         }
 
         if (!storedOtp.toString().equals(emailRequest.otp())) {

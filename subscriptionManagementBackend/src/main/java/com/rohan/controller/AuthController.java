@@ -1,6 +1,9 @@
 
 package com.rohan.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rohan.dto.AuthDtos.AuthResponse;
 import com.rohan.dto.AuthDtos.EmailRequest;
 import com.rohan.dto.AuthDtos.EmailRequestVal;
+import com.rohan.dto.AuthDtos.ForgotPassRequest;
 import com.rohan.dto.AuthDtos.LoginRequest;
 import com.rohan.dto.AuthDtos.RegisterRequest;
 import com.rohan.service.AuthService;
@@ -30,10 +34,7 @@ public class AuthController {
 	private final AuthService authService;
 	private final OtpService otpService;
 	
-//	@GetMapping("/home")
-//	ResponseEntity<String> getHome(){
-//		return ResponseEntity.ok().body("Home Page");
-//	}
+	
 	@PostMapping("/register")
 	@Operation(summary = "Register a new user (FR-01)")
 	ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody RegisterRequest userDetails){
@@ -49,19 +50,51 @@ public class AuthController {
 	}
 	
 	@PostMapping("/sendotp")
-    public ResponseEntity<String> sendOtp(@RequestBody EmailRequest emailRequest) {
-		log.info("FUll object:"+emailRequest.email());
-		log.info("Email in Controller:"+emailRequest);
-        otpService.sendOtp(emailRequest);
-        return ResponseEntity.ok().body("Otp Sent Successfully");
-    }
+	public ResponseEntity<Map<String, Object>> sendOtp(@RequestBody EmailRequest emailRequest) {
+	    log.info("AuthController: Inside SendOtp method. Email: " + emailRequest.email());
+	    otpService.sendOtp(emailRequest);
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("status", "success");
+	    response.put("message", "OTP sent successfully");
+	    response.put("email", emailRequest.email());
 
-    @PostMapping("/verifyotp")
-    public ResponseEntity<String> verifyOtp(@RequestBody EmailRequestVal emailRequest) {
-    	log.info("FUll object:"+emailRequest.email());
-        boolean valid = otpService.verifyOtp(emailRequest);
+	    return ResponseEntity.ok(response);
+	}
 
-        if (valid) return ResponseEntity.ok().body("Otp Verified..");
-        throw new RuntimeException("Invalid OTP");
-    }
+
+	@PostMapping("/verifyotp")
+	public ResponseEntity<Map<String, Object>> verifyOtp(@RequestBody EmailRequestVal emailRequest) {
+	    log.info("AuthController: Inside verifyOtp method. Email: " + emailRequest.email());
+
+	    boolean valid = otpService.verifyOtp(emailRequest);
+
+	    Map<String, Object> response = new HashMap<>();
+	    if (valid) {
+	        response.put("status", "success");
+	        response.put("message", "OTP verified successfully");
+	    } else {
+	        response.put("status", "error");
+	        response.put("message", "Invalid or expired OTP");
+	    }
+
+	    return ResponseEntity.ok(response);
+	}
+	
+	@PostMapping("/forgotpass")
+	public ResponseEntity<Map<String,Object>> forgotPass(@RequestBody ForgotPassRequest userDetails){
+		log.info("AuthController: Inside forgotPass method");
+
+	    boolean valid = authService.forgotPass(userDetails);
+
+	    Map<String, Object> response = new HashMap<>();
+	    if (valid) {
+	        response.put("status", "success");
+	        response.put("message", "Password Reset Successfully...");
+	    } else {
+	        response.put("status", "error");
+	        response.put("message", "Account not found!!!");
+	    }
+
+	    return ResponseEntity.ok(response);
+	}
 }

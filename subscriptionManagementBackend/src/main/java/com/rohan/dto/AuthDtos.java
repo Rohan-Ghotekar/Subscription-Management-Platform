@@ -1,6 +1,6 @@
 package com.rohan.dto;
 
-import com.rohan.entity.UserEntity.Role;
+
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -12,7 +12,8 @@ public class AuthDtos {
 			@NotBlank @Email String email,
 			@NotBlank @Size(min=8, message="Password must be at least 8 characters")
 			String password,
-			@NotBlank String fullname
+			@NotBlank String fullName,
+			String mobile
 			) {}
 	
 	public record LoginRequest(
@@ -21,8 +22,8 @@ public class AuthDtos {
 			) {}
 	
 	public record AuthResponse(
-//			String accessToken,
-//			String refreshToken,
+			String accessToken,
+			String refreshToken,
 			String role,
 			String fullName,
 			Integer loginAttempts,
@@ -34,4 +35,6 @@ public class AuthDtos {
 	public record EmailRequest(String email) {}
 	
 	public record EmailRequestVal(String email,String otp) {}
+	
+	public record ForgotPassRequest(String email,String password) {}z
 }

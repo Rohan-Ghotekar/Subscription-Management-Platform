@@ -31,6 +31,8 @@ public class UserEntity {
 
 	@Column(nullable = false, unique = true)
 	private String email;
+	
+	private String mobile;
 
 	@Column(nullable = false)
 	private String password;
