@@ -1,20 +1,21 @@
 package com.rohan.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,52 +24,41 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users")
-public class UserEntity {
+@Builder
+@Table(name="subscriptions")
+public class Subscription {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long userId;
-
-	@Column(nullable = false, unique = true)
-	private String email;
+	private Long id;
 	
-	@Column
-	private String mobile;
-
-	@Column(nullable = false)
-	private String password;
-
-	@Column(nullable = false)
-	private String fullName;
-
-	@Column
-	private String avatarUrl;
-
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="user_id",nullable=false)
+	private UserEntity user;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_id", nullable = false)
+	private SubscriptionPlan plan;
+	
 	@Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
+	
 	@Column(nullable = false)
-	private Role role;
-
-	@Column
-	private String verificationToken;
+    private LocalDate startDate;
 	
-	@Column
-	private Integer loginAttempts;
+	@Column(nullable = false)
+    private LocalDate endDate;
 	
-	@Column
-	private boolean accountLocked;
+	@Column(nullable = false)
+    private boolean autoRenew;
 	
 	@CreationTimestamp
     private LocalDateTime createdAt;
 	
 	@UpdateTimestamp
     private LocalDateTime updatedAt;
-
-	public enum Role {
-		ADMIN, USER
-	}
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Subscription> subscriptions;
+	
+	public enum Status { ACTIVE, EXPIRED, CANCELLED, PENDING }
 }

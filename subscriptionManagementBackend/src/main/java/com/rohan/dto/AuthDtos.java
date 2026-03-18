@@ -1,7 +1,5 @@
 package com.rohan.dto;
 
-
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -36,5 +34,5 @@ public class AuthDtos {
 	
 	public record EmailRequestVal(String email,String otp) {}
 	
-	public record ForgotPassRequest(String email,String password) {}z
+	public record ForgotPassRequest(String email,String newPassword) {}
 }

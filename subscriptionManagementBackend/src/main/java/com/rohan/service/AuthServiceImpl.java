@@ -133,7 +133,7 @@ public class AuthServiceImpl implements AuthService {
 			return false;
 		}
 		UserEntity user=optional.get();
-		user.setPassword(encoder.encode(userDetails.password()));
+		user.setPassword(encoder.encode(userDetails.newPassword()));
 		userRepository.save(user);
 		return true;
 	}
