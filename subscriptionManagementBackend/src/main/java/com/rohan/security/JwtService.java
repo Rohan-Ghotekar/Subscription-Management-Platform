@@ -24,7 +24,6 @@ public class JwtService {
     @Value("${app.jwt.refresh-expiration}")
     private long refreshExpiry;
 
-    // ── Token generation ──────────────────────────────────────────────────────
 
     public String generateAccessToken(String email, String role) {
         return Jwts.builder()
@@ -45,10 +44,6 @@ public class JwtService {
                 .compact();
     }
 
-    // ── Token validation ──────────────────────────────────────────────────────
-
-    // FIX 1: Added UserDetails overload — used by JwtAuthFilter
-    // Checks both: username matches AND token is not expired
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
             String username = extractUsername(token);
@@ -58,7 +53,6 @@ public class JwtService {
         }
     }
 
-    // FIX 2: Original method now also checks expiry (was missing before)
     public boolean isTokenValid(String token) {
         try {
             return !isTokenExpired(token);
@@ -67,7 +61,6 @@ public class JwtService {
         }
     }
 
-    // ── Claims extraction ─────────────────────────────────────────────────────
 
     public String extractUsername(String token) {
         return parseClaims(token).getSubject();
@@ -77,7 +70,6 @@ public class JwtService {
         return parseClaims(token).get("role", String.class);
     }
 
-    // ── Private helpers ───────────────────────────────────────────────────────
 
     private boolean isTokenExpired(String token) {
         return parseClaims(token).getExpiration().before(new Date());

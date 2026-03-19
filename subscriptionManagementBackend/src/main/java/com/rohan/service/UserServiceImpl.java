@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.rohan.dto.AuthDtos.ForgotPassRequest;
 import com.rohan.dto.UserDtos.UpdateProfileDetails;
 import com.rohan.dto.UserDtos.UserProfileResponse;
 import com.rohan.dto.UserDtos.changePassRequest;

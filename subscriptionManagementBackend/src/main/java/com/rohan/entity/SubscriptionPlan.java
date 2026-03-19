@@ -47,6 +47,10 @@ public class SubscriptionPlan {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BillingInterval billingInterval;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable=false)
+    private Tier tier;
 
     @ElementCollection
     @CollectionTable(name = "plan_features", joinColumns = @JoinColumn(name = "plan_id"))
@@ -57,12 +61,14 @@ public class SubscriptionPlan {
     private String imageUrl;
 
     @Column(nullable = false)
-    private boolean active;
+    @Builder.Default
+    private boolean active=true;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public enum BillingInterval { MONTHLY, QUARTERLY, ANNUAL }
+    public enum BillingInterval { MONTHLY, QUARTERLY, ANNUALLY }
+    public enum Tier {BASIC , PRO ,ENTERPRISE}
     
     @OneToMany(mappedBy = "plan", fetch = FetchType.LAZY)
     private List<Subscription> subscriptions;

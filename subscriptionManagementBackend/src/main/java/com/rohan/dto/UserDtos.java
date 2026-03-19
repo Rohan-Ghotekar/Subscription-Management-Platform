@@ -18,7 +18,8 @@ public class UserDtos {
             String fullName,
             String avatarUrl,
             Role role,
-            LocalDateTime createdAt
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt
     ) {
 
         public static UserProfileResponse from(UserEntity u) {
@@ -28,7 +29,8 @@ public class UserDtos {
                     u.getFullName(),
                     u.getAvatarUrl(),   
                     u.getRole(),        
-                    u.getCreatedAt()    
+                    u.getCreatedAt(),
+                    u.getUpdatedAt()
             );
         }
     }

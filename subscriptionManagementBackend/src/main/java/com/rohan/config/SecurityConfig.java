@@ -38,9 +38,6 @@ public class SecurityConfig {
 
 	private final JwtAuthFilter jwtAuthFilter;
 
-	// FIX: Use the interface type UserDetailsService, not the concrete class.
-	// Spring will inject CustomUserDetailsService automatically because it
-	// implements this interface.
 	private final UserDetailsService userDetailsService;
 
 	@Bean
@@ -49,8 +46,12 @@ public class SecurityConfig {
 				.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(
 						auth -> auth
-								.requestMatchers("/api/auth/**", "/v3/api-docs/**", "/swagger-ui/**",
-										"/swagger-ui.html", "/actuator/health")
+								.requestMatchers(
+										"/api/auth/**",
+										"/v3/api-docs/**",
+										"/swagger-ui/**",
+										"/swagger-ui.html",
+										"/actuator/health")
 								.permitAll().anyRequest().authenticated())
 				.formLogin(form -> form.disable()).httpBasic(basic -> basic.disable())
 				.authenticationProvider(authenticationProvider())
@@ -81,6 +82,11 @@ public class SecurityConfig {
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowedOriginPatterns(List.of("*"));
+//		config.setAllowedOrigins(List.of(
+//                "http://192.168.1.61:5173",
+//                "http://localhost:5173",
+//                "https://192.168.1.61:5173"
+//        ));
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 		config.setAllowedHeaders(List.of("*"));
 		config.setAllowCredentials(true);
