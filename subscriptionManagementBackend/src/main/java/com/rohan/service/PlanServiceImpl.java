@@ -48,7 +48,8 @@ public class PlanServiceImpl implements PlanService {
 	@Override
 	public PlanResponse updateSubscriptionPlan(PlanRequest plan) {
 		log.info("PlanServiceImpl: Inside updateSubscriptionPlan method");
-		Optional<SubscriptionPlan> optional=planRepository.findByName(plan.name());
+		log.info("Id: "+plan.id());
+		Optional<SubscriptionPlan> optional=planRepository.findById(plan.id());
 		if(optional.isEmpty()) {
 			throw new IllegalArgumentException("Invalid Plan!! No Such plan exists...");
 		}
@@ -117,5 +118,14 @@ public class PlanServiceImpl implements PlanService {
 		plan.setActive(true);
 		SubscriptionPlan activatedPlan=planRepository.save(plan);
 		return PlanResponse.from(activatedPlan);
+	}
+
+	@Override
+	public List<PlanResponse> getAllPlansByStatus(boolean status) {
+		Optional<List<SubscriptionPlan>> optional=planRepository.findByActive(status);
+		if(optional.isEmpty()) {
+			return List.of();
+		}
+		return optional.get().stream().map(PlanResponse::from).toList();
 	}
 }

@@ -1,6 +1,8 @@
 package com.rohan.service;
 
 import java.util.List;
+
+
 import com.rohan.dto.PlanDtos.PlanRequest;
 import com.rohan.dto.PlanDtos.PlanResponse;
 
@@ -20,5 +22,7 @@ public interface PlanService {
 	PlanResponse deactivatePlanById(Long id);
 
 	PlanResponse activatePlanById(Long id);
+
+	List<PlanResponse> getAllPlansByStatus(boolean status);
 
 }

@@ -46,7 +46,6 @@ public class PlanController {
 	}
 	
 	@GetMapping("/getallplans")
-	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<PlanResponse>> getAllPlans(){
 		log.info("PlanController: Inside getAllPlans method");
 		return ResponseEntity.ok(planService.getAllPlans());
@@ -76,5 +75,12 @@ public class PlanController {
 	public ResponseEntity<PlanResponse> activatePlanById(@PathVariable Long id){
 		log.info("PlanController: Inside activatePlanById");
 		return ResponseEntity.ok(planService.activatePlanById(id));
+	}
+	
+	@GetMapping("/getallplansbystatus/{status}")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<List<PlanResponse>> getAllPlansByStatus(@PathVariable boolean status){
+		log.info("PlanController: Inside getALlPlansByStatus");
+		return ResponseEntity.ok(planService.getAllPlansByStatus(status));
 	}
 }

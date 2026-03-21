@@ -28,6 +28,13 @@ public class AuthDtos {
 			String message,
 			boolean success
 			) {}
+	
+	public record RefreshResponse(
+			String accessToken,
+			String refreshToken,
+			String role,
+			String fullName
+			) {}
 
 	
 	public record EmailRequest(String email) {}

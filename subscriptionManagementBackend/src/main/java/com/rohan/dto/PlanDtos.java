@@ -14,6 +14,8 @@ public class PlanDtos {
 	
 	
 	public record PlanRequest(
+			Long id,
+			
 		    @NotBlank(message = "Plan name is required")
 		    String name,
 

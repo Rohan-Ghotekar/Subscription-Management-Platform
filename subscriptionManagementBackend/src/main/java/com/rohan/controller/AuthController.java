@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +16,7 @@ import com.rohan.dto.AuthDtos.EmailRequest;
 import com.rohan.dto.AuthDtos.EmailRequestVal;
 import com.rohan.dto.AuthDtos.ForgotPassRequest;
 import com.rohan.dto.AuthDtos.LoginRequest;
+import com.rohan.dto.AuthDtos.RefreshResponse;
 import com.rohan.dto.AuthDtos.RegisterRequest;
 import com.rohan.service.AuthService;
 import com.rohan.service.OtpService;
@@ -92,5 +94,10 @@ public class AuthController {
 	    }
 
 	    return ResponseEntity.ok(response);
+	}
+	
+	@PostMapping("/refresh")
+	public ResponseEntity<RefreshResponse>refresh(@RequestHeader("Refresh-Token") String refreshToken){
+		return ResponseEntity.ok(authService.refresh(refreshToken));
 	}
 }

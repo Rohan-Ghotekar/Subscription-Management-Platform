@@ -60,5 +60,8 @@ public class Subscription {
 	@UpdateTimestamp
     private LocalDateTime updatedAt;
 	
+	@Builder.Default
+	private boolean reminderSent=false;
+	
 	public enum Status { ACTIVE, EXPIRED, CANCELLED, PENDING }
 }

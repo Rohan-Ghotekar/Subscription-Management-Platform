@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.rohan.dto.AuthDtos.AuthResponse;
 import com.rohan.dto.AuthDtos.ForgotPassRequest;
 import com.rohan.dto.AuthDtos.LoginRequest;
+import com.rohan.dto.AuthDtos.RefreshResponse;
 import com.rohan.dto.AuthDtos.RegisterRequest;
 import com.rohan.entity.UserEntity;
 import com.rohan.repository.UserRepository;
@@ -136,5 +137,16 @@ public class AuthServiceImpl implements AuthService {
 		user.setPassword(encoder.encode(userDetails.newPassword()));
 		userRepository.save(user);
 		return true;
+	}
+
+	@Override
+	public RefreshResponse refresh(String refreshToken) {
+		String email=jwtService.extractUsername(refreshToken);
+		Optional<UserEntity> user=userRepository.findByEmail(email);
+		if(user.isEmpty()) {
+			throw new IllegalArgumentException("User Not Found!!");
+		}
+		String newAccessToken=jwtService.generateAccessToken(user.get().getEmail(),user.get().getRole().name());
+		return new RefreshResponse(newAccessToken,refreshToken,user.get().getEmail(),user.get().getFullName());
 	}
 }
