@@ -14,4 +14,6 @@ public interface PlanRepository extends JpaRepository<SubscriptionPlan, Long>{
 	Optional<SubscriptionPlan> findByName(String name);
 	
 	Optional<List<SubscriptionPlan>> findByActive(boolean status);
+	
+	List<SubscriptionPlan> findByActiveTrue();
 }

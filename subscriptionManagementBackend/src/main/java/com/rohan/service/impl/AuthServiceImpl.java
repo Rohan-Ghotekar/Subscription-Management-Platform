@@ -1,4 +1,4 @@
-package com.rohan.service;
+package com.rohan.service.impl;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -15,6 +15,7 @@ import com.rohan.dto.AuthDtos.RegisterRequest;
 import com.rohan.entity.UserEntity;
 import com.rohan.repository.UserRepository;
 import com.rohan.security.JwtService;
+import com.rohan.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.rohan.service;
+package com.rohan.service.impl;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,6 +14,8 @@ import com.rohan.entity.UserEntity;
 import com.rohan.repository.PlanRepository;
 import com.rohan.repository.SubscriptionRepository;
 import com.rohan.repository.UserRepository;
+import com.rohan.service.NotificationService;
+import com.rohan.service.SubscriptionService;
 
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;

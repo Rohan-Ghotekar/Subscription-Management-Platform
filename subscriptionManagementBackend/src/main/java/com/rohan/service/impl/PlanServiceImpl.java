@@ -1,4 +1,4 @@
-package com.rohan.service;
+package com.rohan.service.impl;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +9,7 @@ import com.rohan.dto.PlanDtos.PlanRequest;
 import com.rohan.dto.PlanDtos.PlanResponse;
 import com.rohan.entity.SubscriptionPlan;
 import com.rohan.repository.PlanRepository;
+import com.rohan.service.PlanService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

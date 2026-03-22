@@ -1,4 +1,4 @@
-package com.rohan.service;
+package com.rohan.service.impl;
 
 import java.util.Optional;
 
@@ -10,6 +10,7 @@ import com.rohan.dto.UserDtos.UserProfileResponse;
 import com.rohan.dto.UserDtos.changePassRequest;
 import com.rohan.entity.UserEntity;
 import com.rohan.repository.UserRepository;
+import com.rohan.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

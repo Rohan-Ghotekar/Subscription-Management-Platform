@@ -1,4 +1,4 @@
-package com.rohan.service;
+package com.rohan.service.impl;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;

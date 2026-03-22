@@ -1,10 +1,12 @@
-package com.rohan.service;
+package com.rohan.service.impl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.rohan.entity.NotificationEntity;
 import com.rohan.entity.NotificationEntity.NotificationType;
@@ -27,7 +29,7 @@ public class SystemScheduler {
 
     @Scheduled(cron = "0 0 12 * * ?")
     public void sendExpiryReminders() {
-
+    	log.info("System Scheduler: Inside sendExpiryReminders method");
         LocalDate targetDate = LocalDate.now().plusDays(5);
 
         List<Subscription> expiringSubs =
@@ -68,7 +70,7 @@ public class SystemScheduler {
     
     @Scheduled(cron = "0 0 12 * * ?")
     public void setReminderSent() {
-
+    		log.info("System Scheduler: Inside setReminderSent method");
         LocalDate targetDate = LocalDate.now().plusDays(10);
 
         List<Subscription> expiringSubs =
@@ -81,5 +83,16 @@ public class SystemScheduler {
         			sub.setReminderSent(false);
         			subscriptionRepository.save(sub);
 			}
+    }
+    
+    @Scheduled(cron = "0 0 12 * * ?")
+    @Transactional
+    public void deleteOldReadNotifications() {
+    		log.info("System Scheduler: Inside deleteOldReadNotifications method");
+        LocalDateTime cutoffTime = LocalDateTime.now().minusDays(2);
+
+        notificationRepository.deleteByReadTrueAndReadAtBefore(cutoffTime);
+
+        log.info("Old read notifications deleted at: " + LocalDateTime.now());
     }
 }

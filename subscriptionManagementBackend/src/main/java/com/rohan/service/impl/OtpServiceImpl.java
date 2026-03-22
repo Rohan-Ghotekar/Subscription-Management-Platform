@@ -1,4 +1,4 @@
-package com.rohan.service;
+package com.rohan.service.impl;
 
 import java.util.concurrent.TimeUnit;
 
@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.rohan.dto.AuthDtos.EmailRequest;
 import com.rohan.dto.AuthDtos.EmailRequestVal;
+import com.rohan.service.OtpService;
 
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
