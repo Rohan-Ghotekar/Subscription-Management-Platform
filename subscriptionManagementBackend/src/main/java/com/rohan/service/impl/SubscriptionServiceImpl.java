@@ -1,7 +1,12 @@
 package com.rohan.service.impl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -10,6 +15,7 @@ import com.rohan.dto.SubscriptionResponse;
 import com.rohan.entity.NotificationEntity;
 import com.rohan.entity.Subscription;
 import com.rohan.entity.SubscriptionPlan;
+import com.rohan.entity.SubscriptionPlan.BillingInterval;
 import com.rohan.entity.UserEntity;
 import com.rohan.repository.PlanRepository;
 import com.rohan.repository.SubscriptionRepository;
@@ -69,6 +75,44 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 		}
 		return SubscriptionResponse.from(sub);
 	}
+	
+	@Override
+	@Transactional
+	public SubscriptionResponse subscribeSwitchPlan(String email,Long planId,LocalDate start, LocalDate end) {
+		Optional<UserEntity> optional=userRepository.findByEmail(email);
+		if(optional.isEmpty())return null;
+		Optional<SubscriptionPlan> optional2=planRepository.findById(planId);
+		UserEntity user =optional.get();
+		SubscriptionPlan plan=optional2.get();
+		
+		subRepository.findByUserAndPlanAndStatus(user, plan, Subscription.Status.ACTIVE)
+		.ifPresent(s->{
+			throw new IllegalArgumentException("You have already actively subscribe to the plan: "+plan.getName());
+		});
+		
+		Subscription sub=Subscription.builder()
+				.user(user)
+                .plan(plan)
+                .status(Subscription.Status.ACTIVE)
+                .startDate(start)
+                .endDate(end)
+                .autoRenew(true)
+                .build();
+		subRepository.save(sub);
+		
+		notificationService.send(
+                user,
+                "Subscription Plan Changed Confirmed",
+                "You have successfully subscribed to the \"" + plan.getName() + "\" plan.",
+                NotificationEntity.NotificationType.SUBSCRIPTION_CONFIRMED
+        );
+		try {
+			emailService.sendSubscriptionConfirmation(email, sub.getUser().getFullName(),plan.getName() );
+		} catch (MessagingException e) {
+			log.error("Unable to send confirmation email!!");
+		}
+		return SubscriptionResponse.from(sub);
+	}
 	private LocalDate calculateEndDate(SubscriptionPlan plan) {
         return switch (plan.getBillingInterval()) {
             case MONTHLY   -> LocalDate.now().plusMonths(1);
@@ -114,11 +158,76 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	        return SubscriptionResponse.from(sub);
 	}
 	@Override
-	public SubscriptionResponse switchPlan(String username, Long planId) {
+	public SubscriptionResponse switchPlan(String username, Long planId,Long remDays) {
 		UserEntity user=userRepository.findByEmail(username).get();
 		Subscription activePlan=subRepository.findByUserAndStatus(user,Subscription.Status.ACTIVE);
 		activePlan.setStatus(Subscription.Status.CANCELLED);
+		LocalDate end=LocalDate.now().plusDays(remDays);
 		subRepository.save(activePlan);
-		return subscribePlan(username,planId);
+		return subscribeSwitchPlan(username,planId,activePlan.getStartDate(),end);
+	}
+	@Override
+	public Map<String, Object> calculateUpgradeAmount(String username, Long newPlanId) {
+
+	    Map<String, Object> response = new HashMap<>();
+
+	    UserEntity user = userRepository.findByEmail(username)
+	            .orElseThrow(() -> new RuntimeException("User not found"));
+
+	    Subscription currentSub = subRepository.findByUserAndStatus(user, Subscription.Status.ACTIVE);
+
+	    SubscriptionPlan currentPlan = currentSub.getPlan();
+	    SubscriptionPlan newPlan = planRepository.findById(newPlanId)
+	            .orElseThrow(() -> new RuntimeException("Plan not found"));
+
+	    LocalDate startDate = currentSub.getStartDate();
+	    LocalDate endDate = currentSub.getEndDate();
+	    LocalDate today = LocalDate.now();
+
+	    long totalDays = ChronoUnit.DAYS.between(startDate, endDate);
+	    long totalDaysOfNewPlan = calculateDays(newPlan.getBillingInterval());
+	    long usedDays = ChronoUnit.DAYS.between(startDate, today);
+	    long remainingDays = totalDays - usedDays;
+
+	    if (remainingDays < 0) remainingDays = 0;
+
+	    BigDecimal currentPlanPrice = currentPlan.getPrice();
+	    BigDecimal newPlanPrice = newPlan.getPrice();
+
+	    if (currentPlanPrice.compareTo(newPlanPrice) >= 0) {
+
+	        remainingDays = calculateDays(newPlan.getBillingInterval()) - usedDays;
+
+	        response.put("remainingDays", remainingDays);
+	        response.put("remainingValue", BigDecimal.ZERO);
+	        response.put("newPlanPrice", newPlan.getPrice());
+	        response.put("extraAmountToPay", BigDecimal.ZERO);
+
+	        return response;
+	    }
+
+	    BigDecimal totalDaysBD = BigDecimal.valueOf(calculateDays(currentPlan.getBillingInterval()));
+	    BigDecimal usedDaysBD = BigDecimal.valueOf(usedDays);
+
+	    BigDecimal usedDaysPrice = currentPlanPrice
+	            .divide(totalDaysBD, 2, RoundingMode.HALF_UP)
+	            .multiply(usedDaysBD);
+	    BigDecimal remAmount=currentPlanPrice.subtract(usedDaysPrice);
+	    BigDecimal extraAmount = newPlan.getPrice().subtract(remAmount);
+
+	    response.put("remainingDays", remainingDays);
+	    response.put("remainingValue", currentPlan.getPrice().subtract(usedDaysPrice));
+	    response.put("newPlanPrice", newPlanPrice);
+	    response.put("extraAmountToPay", extraAmount);
+
+	    return response;
+	}
+	private Long calculateDays(BillingInterval billingInterval) {
+		 switch (billingInterval) {
+        case MONTHLY: return 30L;
+        case QUARTERLY: return 90L;
+        case ANNUALLY: return 365L;
+    };
+    return 1L;
 	}
 }

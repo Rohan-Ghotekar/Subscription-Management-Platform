@@ -1,0 +1,11 @@
+# Logs
+logs/
+*.log
+
+# IDE files
+.metadata/
+.sonarlint/
+
+# Docs (optional)
+*.pdf
+*.xlsx

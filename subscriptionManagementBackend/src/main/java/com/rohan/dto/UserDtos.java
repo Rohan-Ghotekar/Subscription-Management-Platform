@@ -19,7 +19,8 @@ public class UserDtos {
             String avatarUrl,
             Role role,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt
+            LocalDateTime updatedAt,
+            String mobile
     ) {
 
         public static UserProfileResponse from(UserEntity u) {
@@ -30,7 +31,8 @@ public class UserDtos {
                     u.getAvatarUrl(),   
                     u.getRole(),        
                     u.getCreatedAt(),
-                    u.getUpdatedAt()
+                    u.getUpdatedAt(),
+                    u.getMobile()
             );
         }
     }

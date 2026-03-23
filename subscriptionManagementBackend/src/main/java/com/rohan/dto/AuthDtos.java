@@ -20,13 +20,14 @@ public class AuthDtos {
 			) {}
 	
 	public record AuthResponse(
-			String accessToken,
-			String refreshToken,
-			String role,
-			String fullName,
-			Integer loginAttempts,
-			String message,
-			boolean success
+            String accessToken,      
+            String refreshToken,     
+            String role,             
+            String fullName,         
+            String avatarUrl,        
+            Integer loginAttempts,   
+            String message,          
+            boolean success 
 			) {}
 	
 	public record RefreshResponse(

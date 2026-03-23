@@ -36,6 +36,7 @@ public class AuthServiceImpl implements AuthService {
 				    null,
 				    "USER",
 				    userDetails.fullName(),
+				    null,
 				    0,
 				    "Email already registered",
 				    false
@@ -59,6 +60,7 @@ public class AuthServiceImpl implements AuthService {
 					accessToken, refreshToken,
 				    user.getRole().name(),
 	                user.getFullName(),
+	                user.getAvatarUrl(),
 	                user.getLoginAttempts(),
 	                "Registration successful",
 	                true);
@@ -74,6 +76,7 @@ public class AuthServiceImpl implements AuthService {
             		    null,
             		    "USER",
             		    "",
+            		    null,
             		    0,
             		    "Invalid email address!! Please Enter Valid Email...",
             		    false
@@ -86,6 +89,7 @@ public class AuthServiceImpl implements AuthService {
             		    null,
             		    user.getRole().name(),
             		    user.getFullName(),
+            		    user.getAvatarUrl(),
             		    user.getLoginAttempts(),
             		    "Account locked due to multiple failed attempts",
             		    false
@@ -106,6 +110,7 @@ public class AuthServiceImpl implements AuthService {
             		    null,
             		    user.getRole().name(),
             		    user.getFullName(),
+            		    user.getAvatarUrl(),
             		    attempts,
             		    "Invalid Password!!",
             		    false
@@ -122,6 +127,7 @@ public class AuthServiceImpl implements AuthService {
                 refreshToken,
                 user.getRole().name(),
                 user.getFullName(),
+                user.getAvatarUrl(),
                 5,
                 "Login successful",
                 true

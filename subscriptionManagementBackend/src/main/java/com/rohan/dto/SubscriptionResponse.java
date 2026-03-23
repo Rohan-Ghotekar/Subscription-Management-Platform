@@ -23,6 +23,7 @@ public class SubscriptionResponse {
     private String planName;
     private String planDescription;
     private BigDecimal Price;
+    private SubscriptionPlan.Tier tier;
     private SubscriptionPlan.BillingInterval billing;
     private Subscription.Status status;
     private LocalDate startDate;
@@ -44,6 +45,7 @@ public class SubscriptionResponse {
                 .planName(s.getPlan().getName())
                 .planDescription(s.getPlan().getDescription())
                 .Price(s.getPlan().getPrice())
+                .tier(s.getPlan().getTier())
                 .billing(s.getPlan().getBillingInterval())
                 .status(s.getStatus())
                 .startDate(s.getStartDate())

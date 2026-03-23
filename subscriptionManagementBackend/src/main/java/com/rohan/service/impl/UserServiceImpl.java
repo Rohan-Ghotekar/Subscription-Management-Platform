@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.rohan.dto.UserDtos.UpdateProfileDetails;
 import com.rohan.dto.UserDtos.UserProfileResponse;
@@ -22,6 +23,7 @@ public class UserServiceImpl implements UserService {
 	
 	private final UserRepository userRepository;
 	private final PasswordEncoder encoder;
+	private final S3Service s3Service;
 	
 	@Override
 	public UserProfileResponse getProfile(String email) {
@@ -58,4 +60,31 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return UserProfileResponse.from(user);
     }
+
+	@Override
+	public UserProfileResponse updateProfilePhoto(String email, MultipartFile avatar) {
+		Optional<UserEntity>optional=userRepository.findByEmail(email);
+		UserEntity user=optional.get();
+		if(user.getAvatarUrl()!=null) {
+			try {
+		        String key = extractKeyFromUrl(user.getAvatarUrl());
+
+		        s3Service.delete(key);
+
+		        System.out.println("Deleted key: " + key);
+
+		    } catch (Exception e) {
+		        throw new RuntimeException("Failed to delete file", e);
+		    }
+		}
+		if (avatar != null && !avatar.isEmpty()) {
+            user.setAvatarUrl(s3Service.uploadAvatar(avatar));
+        }
+		userRepository.save(user);
+		return UserProfileResponse.from(user);
+	}
+	
+	private String extractKeyFromUrl(String fileUrl) {
+	    return fileUrl.substring(fileUrl.indexOf(".amazonaws.com/") + 15);
+	}
 }

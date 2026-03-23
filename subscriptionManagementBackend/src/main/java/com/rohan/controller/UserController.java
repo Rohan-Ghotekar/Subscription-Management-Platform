@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.rohan.dto.UserDtos.UpdateProfileDetails;
 import com.rohan.dto.UserDtos.UserProfileResponse;
@@ -60,4 +62,13 @@ public class UserController {
 			@RequestBody UpdateProfileDetails details){
 			return ResponseEntity.ok(userService.updateProfile(userDetails.getUsername(),details));
 	}
+	
+	@PutMapping("/updateprofilephoto")
+	public ResponseEntity<UserProfileResponse>updateProfilePhoto(
+			@AuthenticationPrincipal UserDetails userDetails,
+			@RequestPart(value = "avatar") MultipartFile avatar){
+		return ResponseEntity.ok(
+                userService.updateProfilePhoto(userDetails.getUsername(), avatar));
+	}
+	
 }
