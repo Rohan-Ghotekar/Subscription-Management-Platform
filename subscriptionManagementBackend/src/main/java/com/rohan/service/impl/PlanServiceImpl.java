@@ -7,10 +7,20 @@ import org.springframework.stereotype.Service;
 
 import com.rohan.dto.PlanDtos.PlanRequest;
 import com.rohan.dto.PlanDtos.PlanResponse;
+import com.rohan.dto.UserDtos.UserProfileResponse;
+import com.rohan.entity.NotificationEntity;
 import com.rohan.entity.SubscriptionPlan;
+import com.rohan.entity.UserEntity;
+import com.rohan.entity.NotificationEntity.NotificationType;
+import com.rohan.entity.Subscription.Status;
+import com.rohan.repository.NotificationRepository;
 import com.rohan.repository.PlanRepository;
+import com.rohan.repository.SubscriptionRepository;
+import com.rohan.repository.UserRepository;
+import com.rohan.service.AdminService;
 import com.rohan.service.PlanService;
 
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +30,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PlanServiceImpl implements PlanService {
 	private final PlanRepository planRepository;
-	
+	private final EmailService emailService;
+	private final UserRepository userRepository;
+	private final NotificationRepository notificationRepository;
 	
 	@Override
 	@Transactional
@@ -42,6 +54,25 @@ public class PlanServiceImpl implements PlanService {
 		
 		SubscriptionPlan saved=planRepository.save(subPlan);
 		log.info("Plan Created with id: "+subPlan.getId()+" and Name: "+subPlan.getName());
+		List<UserEntity>users=userRepository.findAll();
+		for(UserEntity useri:users) {
+			try {
+				emailService.sendNewPlanLaunchedEmail(useri.getEmail(), useri.getFullName(), subPlan.getName(),subPlan.getPrice().toString(),subPlan.getFeatures().toString());
+     		
+			} catch (MessagingException e) {
+				log.info("Unable to Send Reminder...");
+			}
+
+         NotificationEntity notification = NotificationEntity.builder()
+         		.title("New Plan Has Been Launched..")
+         	    .user(useri)
+         	    .message("New Plan Features: "+subPlan.getFeatures())
+         	    .type(NotificationType.PLAN_CHANGED)
+         	    .build();
+
+         	notificationRepository.save(notification);
+		}
+		 
 		return PlanResponse.from(saved);
 	}
 	

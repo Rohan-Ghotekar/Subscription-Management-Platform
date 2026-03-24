@@ -347,4 +347,358 @@ public class EmailService {
 
         mailSender.send(message);
     }
+    
+    @Async
+    public void sendPlanExpiredEmail(String to, String name, String planName) throws MessagingException {
+
+        if (to == null) {
+            throw new RuntimeException("Email is NULL before sending mail!!");
+        }
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        helper.setTo(to);
+        helper.setSubject("Your " + planName + " subscription has expired");
+
+        String html = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f4f6f8;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 30px auto;
+                        background-color: #ffffff;
+                        border-radius: 10px;
+                        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                        overflow: hidden;
+                    }
+                    .header {
+                        background-color: #F44336;
+                        color: white;
+                        text-align: center;
+                        padding: 20px;
+                        font-size: 22px;
+                        font-weight: bold;
+                    }
+                    .content {
+                        padding: 30px;
+                        color: #333;
+                        line-height: 1.6;
+                        font-size: 15px;
+                    }
+                    .plan-box {
+                        margin: 20px 0;
+                        text-align: center;
+                        font-size: 20px;
+                        font-weight: bold;
+                        color: #F44336;
+                    }
+                    .button {
+                        display: inline-block;
+                        padding: 12px 24px;
+                        margin-top: 20px;
+                        background-color: #F44336;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 6px;
+                        font-weight: 600;
+                    }
+                    .footer {
+                        background-color: #f4f6f8;
+                        padding: 15px;
+                        text-align: center;
+                        font-size: 12px;
+                        color: #777;
+                    }
+                </style>
+            </head>
+            <body>
+
+                <div class="container">
+
+                    <div class="header">
+                        Subscription Expired
+                    </div>
+
+                    <div class="content">
+                        <p>Hello %s,</p>
+
+                        <p>Your subscription has expired, and you no longer have access to premium features.</p>
+
+                        <div class="plan-box">
+                            %s Plan Expired
+                        </div>
+
+                        <p>To continue enjoying our services, please renew your subscription.</p>
+
+
+                        <p>If you believe this is a mistake, please contact our support team.</p>
+
+                        <p>Best regards,<br>
+                        <b>Support Team</b><br>
+                        Subscription Management Platform</p>
+                    </div>
+
+                    <div class="footer">
+                        © 2026 Subscription Management Platform. All rights reserved.
+                    </div>
+
+                </div>
+
+            </body>
+            </html>
+            """.formatted(name, planName);
+
+        helper.setText(html, true);
+
+        mailSender.send(message);
+    }
+    
+    @Async
+    public void sendRenewalSuccessEmail(String to, String name, String planName, String renewalDate, String nextBillingDate) throws MessagingException {
+
+        if (to == null) {
+            throw new RuntimeException("Email is NULL before sending mail!!");
+        }
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        helper.setTo(to);
+        helper.setSubject("Subscription Renewed Successfully — " + planName);
+
+        String html = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f4f6f8;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 30px auto;
+                        background-color: #ffffff;
+                        border-radius: 10px;
+                        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                        overflow: hidden;
+                    }
+                    .header {
+                        background-color: #2196F3;
+                        color: white;
+                        text-align: center;
+                        padding: 20px;
+                        font-size: 22px;
+                        font-weight: bold;
+                    }
+                    .content {
+                        padding: 30px;
+                        color: #333;
+                        line-height: 1.6;
+                        font-size: 15px;
+                    }
+                    .highlight-box {
+                        margin: 20px 0;
+                        text-align: center;
+                        font-size: 18px;
+                        font-weight: bold;
+                        color: #2196F3;
+                    }
+                    .button {
+                        display: inline-block;
+                        padding: 12px 24px;
+                        margin-top: 20px;
+                        background-color: #2196F3;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 6px;
+                        font-weight: 600;
+                    }
+                    .footer {
+                        background-color: #f4f6f8;
+                        padding: 15px;
+                        text-align: center;
+                        font-size: 12px;
+                        color: #777;
+                    }
+                </style>
+            </head>
+            <body>
+
+                <div class="container">
+
+                    <div class="header">
+                        Subscription Renewed
+                    </div>
+
+                    <div class="content">
+                        <p>Hello %s,</p>
+
+                        <p>Great news! Your subscription has been successfully renewed.</p>
+
+                        <div class="highlight-box">
+                            %s Plan Renewed on %s
+                        </div>
+
+                        <p>Your access will continue without interruption.</p>
+
+                        <p><b>Next Billing Date:</b> %s</p>
+
+                        <p>If you have any questions or need assistance, feel free to contact our support team.</p>
+
+                        <p>Best regards,<br>
+                        <b>Support Team</b><br>
+                        Subscription Management Platform</p>
+                    </div>
+
+                    <div class="footer">
+                        © 2026 Subscription Management Platform. All rights reserved.
+                    </div>
+
+                </div>
+
+            </body>
+            </html>
+            """.formatted(name, planName, renewalDate, nextBillingDate);
+
+        helper.setText(html, true);
+
+        mailSender.send(message);
+    }
+    
+    @Async
+    public void sendNewPlanLaunchedEmail(String to, String name, String planName, String planPrice, String planFeatures) throws MessagingException {
+
+        if (to == null) {
+            throw new RuntimeException("Email is NULL before sending mail!!");
+        }
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        helper.setTo(to);
+        helper.setSubject("🚀 New Plan Launched — " + planName);
+
+        String html = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f4f6f8;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 30px auto;
+                        background-color: #ffffff;
+                        border-radius: 10px;
+                        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                        overflow: hidden;
+                    }
+                    .header {
+                        background-color: #673AB7;
+                        color: white;
+                        text-align: center;
+                        padding: 20px;
+                        font-size: 22px;
+                        font-weight: bold;
+                    }
+                    .content {
+                        padding: 30px;
+                        color: #333;
+                        line-height: 1.6;
+                        font-size: 15px;
+                    }
+                    .plan-box {
+                        margin: 20px 0;
+                        text-align: center;
+                        font-size: 20px;
+                        font-weight: bold;
+                        color: #673AB7;
+                    }
+                    .features {
+                        margin-top: 15px;
+                        padding-left: 20px;
+                    }
+                    .features li {
+                        margin-bottom: 8px;
+                    }
+                    .button {
+                        display: inline-block;
+                        padding: 12px 24px;
+                        margin-top: 20px;
+                        background-color: #673AB7;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 6px;
+                        font-weight: 600;
+                    }
+                    .footer {
+                        background-color: #f4f6f8;
+                        padding: 15px;
+                        text-align: center;
+                        font-size: 12px;
+                        color: #777;
+                    }
+                </style>
+            </head>
+            <body>
+
+                <div class="container">
+
+                    <div class="header">
+                        🚀 New Plan Launched
+                    </div>
+
+                    <div class="content">
+                        <p>Hello %s,</p>
+
+                        <p>We’re excited to introduce a brand new subscription plan designed to give you even more value!</p>
+
+                        <div class="plan-box">
+                            %s Plan — %s
+                        </div>
+
+                        <p><b>Key Features:</b></p>
+                        <ul class="features">
+                            %s
+                        </ul>
+
+                        <p>Upgrade now and enjoy enhanced features tailored for you.</p>
+
+                        <p>If you have any questions, feel free to contact our support team.</p>
+
+                        <p>Best regards,<br>
+                        <b>Support Team</b><br>
+                        Subscription Management Platform</p>
+                    </div>
+
+                    <div class="footer">
+                        © 2026 Subscription Management Platform. All rights reserved.
+                    </div>
+
+                </div>
+
+            </body>
+            </html>
+            """.formatted(name, planName, planPrice, planFeatures);
+
+        helper.setText(html, true);
+
+        mailSender.send(message);
+    }
 }

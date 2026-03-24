@@ -185,7 +185,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	    LocalDate today = LocalDate.now();
 
 	    long totalDays = ChronoUnit.DAYS.between(startDate, endDate);
-	    long totalDaysOfNewPlan = calculateDays(newPlan.getBillingInterval());
 	    long usedDays = ChronoUnit.DAYS.between(startDate, today);
 	    long remainingDays = totalDays - usedDays;
 

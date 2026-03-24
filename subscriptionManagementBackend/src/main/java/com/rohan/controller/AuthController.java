@@ -1,4 +1,3 @@
-
 package com.rohan.controller;
 
 import java.util.HashMap;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rohan.dto.AuthDtos.AuthResponse;
@@ -99,5 +99,10 @@ public class AuthController {
 	@PostMapping("/refresh")
 	public ResponseEntity<RefreshResponse>refresh(@RequestHeader("Refresh-Token") String refreshToken){
 		return ResponseEntity.ok(authService.refresh(refreshToken));
+	}
+	
+	@GetMapping("/verifyemail")
+	public ResponseEntity<Map<String, Object>> verifyEmail(@RequestParam String email){
+		return ResponseEntity.ok(authService.verifyEmail(email));
 	}
 }

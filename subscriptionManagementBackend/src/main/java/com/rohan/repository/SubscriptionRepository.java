@@ -37,4 +37,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
 	
 	Page<Subscription> findByPlanOrderByCreatedAtDesc(
             SubscriptionPlan plan, Pageable pageable);
+
+	List<Subscription> findByEndDateLessThanEqualAndStatus(LocalDate today, Subscription.Status status);
+
 }

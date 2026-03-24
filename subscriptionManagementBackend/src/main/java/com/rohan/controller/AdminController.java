@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rohan.dto.AnalyticsDtos.AnalyticsSummaryResponse;
 import com.rohan.dto.AnalyticsDtos.GrowthDataResponse;
 import com.rohan.dto.AnalyticsDtos.PlanDistributionResponse;
+import com.rohan.dto.SubscriptionResponse;
 import com.rohan.dto.UserDtos.UserProfileResponse;
 import com.rohan.service.AdminService;
 
@@ -57,5 +59,11 @@ public class AdminController {
     public ResponseEntity<List<PlanDistributionResponse>> getPlanDistribution() {
         return ResponseEntity.ok(adminService.getPlanDistribution());
     }
+	
+	@GetMapping("/getuseractiveplan/{userId}")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<SubscriptionResponse> getUserActivePlanByUserId(@PathVariable Long userId){
+		return ResponseEntity.ok(adminService.getUserActivePlanByUserId(userId));
+	}
 	
 }

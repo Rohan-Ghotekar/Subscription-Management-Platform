@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -14,8 +15,10 @@ import org.springframework.stereotype.Service;
 import com.rohan.dto.AnalyticsDtos.AnalyticsSummaryResponse;
 import com.rohan.dto.AnalyticsDtos.GrowthDataResponse;
 import com.rohan.dto.AnalyticsDtos.PlanDistributionResponse;
+import com.rohan.dto.SubscriptionResponse;
 import com.rohan.dto.UserDtos.UserProfileResponse;
 import com.rohan.entity.Subscription;
+import com.rohan.entity.Subscription.Status;
 import com.rohan.entity.SubscriptionPlan;
 import com.rohan.entity.UserEntity;
 import com.rohan.repository.PlanRepository;
@@ -121,5 +124,16 @@ public class AdminServiceImpl implements AdminService {
                     : 0.0;
             return new PlanDistributionResponse(plan.getName(), count, pct);
         }).collect(Collectors.toList());
+	}
+
+	@Override
+	public SubscriptionResponse getUserActivePlanByUserId(Long userId) {
+		Optional<UserEntity> optional=userRepository.findById(userId);
+		if(optional.isEmpty()) {
+			throw new IllegalArgumentException("User Not Found!!");
+		}
+		UserEntity user=optional.get();
+		Subscription sub=subRepository.findByUserAndStatus(user,Status.ACTIVE);
+		return SubscriptionResponse.from(sub);
 	}
 }

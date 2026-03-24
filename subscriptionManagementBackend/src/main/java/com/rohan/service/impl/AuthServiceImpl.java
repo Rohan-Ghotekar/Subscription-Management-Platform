@@ -1,5 +1,7 @@
 package com.rohan.service.impl;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,6 +30,7 @@ public class AuthServiceImpl implements AuthService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder encoder;
 	private final JwtService jwtService;
+	
 	@Override
 	@Transactional
 	public AuthResponse registerUser(RegisterRequest userDetails) {
@@ -155,5 +158,19 @@ public class AuthServiceImpl implements AuthService {
 		}
 		String newAccessToken=jwtService.generateAccessToken(user.get().getEmail(),user.get().getRole().name());
 		return new RefreshResponse(newAccessToken,refreshToken,user.get().getEmail(),user.get().getFullName());
+	}
+
+	@Override
+	public Map<String, Object> verifyEmail(String email) {
+		Optional<UserEntity> optional=userRepository.findByEmail(email);
+		Map<String, Object> response = new HashMap<>();
+		if(!optional.isEmpty()) {
+			response.put("success", false);
+			response.put("message", "Email Already Register..Try Login.");
+			return response;
+		}
+		response.put("success", true);
+		response.put("message", "New Email..");
+		return response;
 	}
 }
