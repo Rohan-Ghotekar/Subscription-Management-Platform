@@ -18,7 +18,6 @@ public interface SubscriptionService {
 	SubscriptionResponse cancelSubscription(String username, Long subId);
 	
 	Map<String,Object> calculateUpgradeAmount(String username, Long newPlanId);
-
 	SubscriptionResponse switchPlan(String username, Long planId, Long RemDays);
 
 	SubscriptionResponse subscribeSwitchPlan(String email, Long planId, LocalDate start, LocalDate end);

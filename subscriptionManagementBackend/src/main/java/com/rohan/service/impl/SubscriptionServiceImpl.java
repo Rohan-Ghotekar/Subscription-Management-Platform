@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.rohan.dto.SubscriptionResponse;
 import com.rohan.entity.NotificationEntity;
 import com.rohan.entity.Subscription;
+import com.rohan.entity.Subscription.Status;
 import com.rohan.entity.SubscriptionPlan;
 import com.rohan.entity.SubscriptionPlan.BillingInterval;
 import com.rohan.entity.UserEntity;
@@ -47,11 +48,17 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 		UserEntity user =optional.get();
 		SubscriptionPlan plan=optional2.get();
 		
-		subRepository.findByUserAndPlanAndStatus(user, plan, Subscription.Status.ACTIVE)
-		.ifPresent(s->{
-			throw new IllegalArgumentException("You have already actively subscribe to the plan: "+plan.getName());
-		});
-		
+//		subRepository.findByUserAndPlanAndStatus(user, plan, Subscription.Status.ACTIVE)
+//		.ifPresent(s->{
+//			throw new IllegalArgumentException("You have already actively subscribe to the plan: "+plan.getName());
+//		});
+//		
+//		subRepository.findActiveSub(user.getUserId(), plan.getId(), Subscription.Status.ACTIVE)
+//	    .ifPresent(s -> {
+//	        throw new IllegalArgumentException(
+//	            "You have already actively subscribed to the plan: " + plan.getName()
+//	        );
+//	    });
 		Subscription sub=Subscription.builder()
 				.user(user)
                 .plan(plan)
@@ -75,7 +82,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 		}
 		return SubscriptionResponse.from(sub);
 	}
-	
+//	
 	@Override
 	@Transactional
 	public SubscriptionResponse subscribeSwitchPlan(String email,Long planId,LocalDate start, LocalDate end) {
@@ -85,11 +92,16 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 		UserEntity user =optional.get();
 		SubscriptionPlan plan=optional2.get();
 		
-		subRepository.findByUserAndPlanAndStatus(user, plan, Subscription.Status.ACTIVE)
-		.ifPresent(s->{
-			throw new IllegalArgumentException("You have already actively subscribe to the plan: "+plan.getName());
-		});
-		
+		Optional<Subscription> subDemo=subRepository.findByUserAndPlanAndStatus(user, plan, Subscription.Status.ACTIVE);
+		if(subDemo.isPresent()) {
+			subDemo.get().setEndDate(LocalDate.now());
+			subDemo.get().setStatus(Status.CANCELLED);
+			subRepository.save(subDemo.get());
+		}
+//		.ifPresent(s->{
+//			throw new IllegalArgumentException("You have already actively subscribe to the plan: "+plan.getName());
+//		});
+//		
 		Subscription sub=Subscription.builder()
 				.user(user)
                 .plan(plan)
@@ -130,6 +142,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	public SubscriptionResponse getMyActiveSubscriptions(String username) {
 		UserEntity user=userRepository.findByEmail(username).get();
 		Subscription activePlan = subRepository.findByUserAndStatus(user,Subscription.Status.ACTIVE);
+		if(activePlan==null)return null;
 		return SubscriptionResponse.from(activePlan);
 	}
 	@Override
@@ -146,6 +159,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	        }
 
 	        sub.setStatus(Subscription.Status.CANCELLED);
+	        sub.setEndDate(LocalDate.now());
 	        subRepository.save(sub);
 
 	        notificationService.send(
@@ -159,11 +173,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 	}
 	@Override
 	public SubscriptionResponse switchPlan(String username, Long planId,Long remDays) {
+		log.info("Subscription: -------- Inside switch Plan");
 		UserEntity user=userRepository.findByEmail(username).get();
 		Subscription activePlan=subRepository.findByUserAndStatus(user,Subscription.Status.ACTIVE);
-		activePlan.setStatus(Subscription.Status.CANCELLED);
+		cancelSubscription(username,activePlan.getId());
 		LocalDate end=LocalDate.now().plusDays(remDays);
-		subRepository.save(activePlan);
 		return subscribeSwitchPlan(username,planId,activePlan.getStartDate(),end);
 	}
 	@Override

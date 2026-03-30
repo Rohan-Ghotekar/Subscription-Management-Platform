@@ -46,12 +46,16 @@ public class SecurityConfig {
 				.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(
 						auth -> auth
+								.requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
 								.requestMatchers(
+										"/",
 										"/api/auth/**",
 										"/v3/api-docs/**",
 										"/swagger-ui/**",
 										"/swagger-ui.html",
-										"/actuator/health")
+										"/actuator/health",
+										"/api/webhook/**",
+										"/api/webhook/stripe")
 								.permitAll().anyRequest().authenticated())
 				.formLogin(form -> form.disable()).httpBasic(basic -> basic.disable())
 				.authenticationProvider(authenticationProvider())
@@ -64,9 +68,10 @@ public class SecurityConfig {
 	AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
 		provider.setPasswordEncoder(passwordEncoder());
-		provider.setPasswordEncoder(passwordEncoder());
+//		provider.setPasswordEncoder(passwordEncoder());
 		return provider;
 	}
+	
 
 	@Bean
 	AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
@@ -81,24 +86,49 @@ public class SecurityConfig {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOriginPatterns(List.of("*"));
+				config.setAllowedOrigins(List.of(
+					    "https://subscription-management-xi.vercel.app", // deployed frontend
+					    "https://subscription-management-git-main-rohan-ghotekars-projects.vercel.app",
+					    "http://localhost:5173"
+//					    "https://frontend-submanage-u89h-git-main-rohan-ghotekars-projects.vercel.app"
+					));
+
 //		config.setAllowedOrigins(List.of(
 //                "http://192.168.1.61:5173",
 //                "http://localhost:5173",
 //                "https://192.168.1.61:5173"
 //        ));
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-		config.setAllowedHeaders(List.of("*"));
+		config.setAllowedHeaders(List.of(
+			    "Authorization",
+			    "Content-Type",
+			    "Accept"
+			));
 		config.setAllowCredentials(true);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);
 		return source;
 	}
 
+//	@Bean
+//	OpenAPI customOpenAPI() {
+//		return new OpenAPI()
+//				.addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+//				.components(new Components().addSecuritySchemes("bearerAuth", new SecurityScheme().name("bearerAuth")
+//						.type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
+//	}
+	
 	@Bean
 	OpenAPI customOpenAPI() {
-		return new OpenAPI().addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-				.components(new Components().addSecuritySchemes("bearerAuth", new SecurityScheme().name("bearerAuth")
-						.type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
+	    return new OpenAPI()
+	            .addServersItem(new io.swagger.v3.oas.models.servers.Server()
+	                    .url("https://subscriptionmanagement.duckdns.org")) // 🔥 IMPORTANT FIX
+	            .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+	            .components(new Components().addSecuritySchemes("bearerAuth",
+	                    new SecurityScheme()
+	                            .name("bearerAuth")
+	                            .type(SecurityScheme.Type.HTTP)
+	                            .scheme("bearer")
+	                            .bearerFormat("JWT")));
 	}
 }

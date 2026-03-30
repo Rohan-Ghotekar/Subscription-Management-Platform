@@ -38,6 +38,9 @@ public class SubscriptionResponse {
     private String userFullName;
 
     public static SubscriptionResponse from(Subscription s) {
+    	if (s == null) {
+            return null;
+        }
         long days = java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), s.getEndDate());
         return SubscriptionResponse.builder()
                 .subId(s.getId())

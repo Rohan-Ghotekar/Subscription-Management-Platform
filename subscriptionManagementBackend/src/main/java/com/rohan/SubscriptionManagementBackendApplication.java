@@ -12,6 +12,6 @@ public class SubscriptionManagementBackendApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SubscriptionManagementBackendApplication.class, args);
-	}
+	}	
 
 }

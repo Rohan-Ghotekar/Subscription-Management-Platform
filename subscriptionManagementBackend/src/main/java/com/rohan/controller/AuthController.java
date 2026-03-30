@@ -35,6 +35,10 @@ public class AuthController {
 	private final AuthService authService;
 	private final OtpService otpService;
 	
+//	@GetMapping("/")
+//	public String home() {
+//	    return "Welcome";
+//	}
 	@PostMapping("/register")
 	ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody RegisterRequest userDetails){
 		log.info("AuthController: Inside registerUser Method");
@@ -50,6 +54,7 @@ public class AuthController {
 	@PostMapping("/sendotp")
 	public ResponseEntity<Map<String, Object>> sendOtp(@RequestBody EmailRequest emailRequest) {
 	    log.info("AuthController: Inside SendOtp method. Email: " + emailRequest.email());
+	    
 	    otpService.sendOtp(emailRequest);
 	    Map<String, Object> response = new HashMap<>();
 	    response.put("status", "success");

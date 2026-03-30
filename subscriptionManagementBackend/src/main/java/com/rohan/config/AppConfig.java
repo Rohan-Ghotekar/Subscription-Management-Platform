@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
 public class AppConfig {
@@ -21,4 +22,9 @@ public class AppConfig {
 	ModelMapper getModelMapper() {
 		return new ModelMapper();
 	}
+	
+//	@Bean
+//	UserDetailsService userDetailsService() {
+//	    return userDetailsService;
+//	}
 }

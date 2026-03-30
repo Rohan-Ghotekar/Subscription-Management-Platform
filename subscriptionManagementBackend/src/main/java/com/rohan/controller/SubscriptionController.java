@@ -46,7 +46,9 @@ public class SubscriptionController {
 	@GetMapping("/myactiveplan")
 	public ResponseEntity<SubscriptionResponse> getMyActiveSubscriptions(
 			@AuthenticationPrincipal UserDetails userDetails){
-		return ResponseEntity.ok(subService.getMyActiveSubscriptions(userDetails.getUsername()));
+		 SubscriptionResponse subRep=subService.getMyActiveSubscriptions(userDetails.getUsername());
+		 if(subRep==null) return ResponseEntity.noContent().build();
+		 return ResponseEntity.ok(subRep);
 	}
 	
 	@PutMapping("/cancel/{subId}")
