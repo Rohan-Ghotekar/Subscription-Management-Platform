@@ -107,6 +107,7 @@ ADMIN
  ├── Analytics
  └── Notifications
 
+
 📧 Email OTP Verification
 
 The platform uses Redis for temporary OTP storage.
@@ -143,6 +144,7 @@ Is removed after successful verification
 Is sent to the user's registered email address
 
 Redis is used for temporary OTP data instead of storing verification codes permanently in the relational database.
+
 
 💳 Payment System
 
@@ -186,6 +188,7 @@ Subscription activation after successful payment
 Billing history
 Administrative payment history
 
+
 🔔 Notification System
 
 The platform supports two types of notifications:
@@ -203,11 +206,13 @@ Email notifications
        Application UI             User Email
 
 
+
 ⏰ Automated Scheduler System
 
 The backend contains scheduled background jobs that automatically handle subscription lifecycle operations and notifications.
 
 The scheduler reduces manual intervention and automatically performs time-based operations.
+
 
 🔔 7-Day Subscription Reminder
 
@@ -220,6 +225,7 @@ Create an in-app notification
 Track the reminder state
 Prevent unnecessary duplicate reminders
 
+
 🔔 1-Day Subscription Reminder
 
 The system also checks subscriptions that are expiring in 1 day.
@@ -230,6 +236,7 @@ Email reminder
 In-app notification
 
 Auto-renewing subscriptions are handled separately from manual-renewal reminders.
+
 
 🔄 Subscription Expiry & Auto Renewal
 
@@ -250,6 +257,7 @@ Subscription Expired
        ▼      ▼
  Email +    Email +
 Notification Notification
+
 
 🗑️ Automatic Notification Cleanup
 
@@ -280,6 +288,7 @@ Keep notification data clean
 Reduce unused records
 Maintain relevant notification history
 
+
 ☁️ AWS S3 File Storage
 
 The backend integrates with Amazon S3 for cloud-based file storage.
@@ -303,6 +312,7 @@ Amazon S3
    ├── User Avatars
    │
    └── Plan Images
+
 
 ☁️ Production Deployment
 
@@ -336,6 +346,8 @@ This allows the frontend to communicate securely with the backend using HTTPS re
               │             │              │
           Application      OTPs        Images/Files
              Data
+
+
 
 🏗️ System Architecture
 
@@ -381,6 +393,7 @@ This allows the frontend to communicate securely with the backend using HTTPS re
       Email
    Notifications
 
+
 🛠️ Technology Stack
 Frontend
 React
@@ -423,6 +436,8 @@ GitHub
 GitHub Codespaces
 Maven
 npm
+
+
 
 📂 Project Structure
 
@@ -472,15 +487,18 @@ Subscription-Management-Platform/
 ├── .gitignore
 └── README.md
 
+
 📚 API Documentation
 
 The backend includes SpringDoc OpenAPI support.
 
 This provides API documentation and allows REST endpoints to be explored and tested through an OpenAPI/Swagger interface when enabled in the running environment.
 
+
 ⚙️ Local Development Setup
 1. Clone the Repository
 git clone https://github.com/Rohan-Ghotekar/Subscription-Management-Platform.git
+
 
 🔑 Environment Variables
 
@@ -556,6 +574,8 @@ Scheduled background processing
 Layered Spring Boot architecture
 OpenAPI/Swagger API documentation
 Separate frontend and backend codebases within a single repository
+
+
 🔮 Future Improvements
 Automated CI/CD pipeline
 Comprehensive unit and integration testing
@@ -574,3 +594,7 @@ Backend development, REST API development, authentication and authorization, pay
 
 Unnati
 Frontend development and user interface implementation.
+
+📄 License
+
+This project is developed for educational, portfolio, and demonstration purposes.
